@@ -1,9 +1,17 @@
 package cl.praxis.JPARental.model.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "film")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class Film {
 
   @Id
@@ -19,66 +27,26 @@ public class Film {
   @JoinColumn(name="language_id", insertable = true, updatable = true)
   private Language language;
 
-  public Film() {
-  }
+  /*
+    join film_category
+      on (film.film_id = film_category.film_id)
+    join category
+      on (category.category_id = film_category.category_id)
+   */
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name="film_category",
+          joinColumns = @JoinColumn(name="film_id", referencedColumnName = "film_id"),
+          inverseJoinColumns = @JoinColumn(name="category_id", referencedColumnName = "category_id")
+  )
+  private List<Category> categories;
 
-  public Film(int id, String title, String description, int year, Language language) {
-    this.id = id;
-    this.title = title;
-    this.description = description;
-    this.year = year;
-    this.language = language;
-  }
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name="film_actor",
+    joinColumns = @JoinColumn(name="film_id", referencedColumnName = "film_id"),
+    inverseJoinColumns = @JoinColumn(name="actor_id", referencedColumnName = "actor_id")
+  )
+  private List<Actor> actors;
 
-  public int getId() {
-    return id;
-  }
 
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public int getYear() {
-    return year;
-  }
-
-  public void setYear(int year) {
-    this.year = year;
-  }
-
-  public Language getLanguage() {
-    return language;
-  }
-
-  public void setLanguage(Language language) {
-    this.language = language;
-  }
-
-  @Override
-  public String toString() {
-    return "Film{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", description='" + description + '\'' +
-            ", year=" + year +
-            ", language=" + language.toString() +
-            '}';
-  }
 }
 
