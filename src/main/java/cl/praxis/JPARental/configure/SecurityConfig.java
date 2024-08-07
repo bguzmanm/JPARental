@@ -46,8 +46,18 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-            //.csrf((csrf) -> csrf.disable())
-            .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+            /**
+             * CSRF (Cross-Site Request Forgery) es un tipo de ataque en el que
+             * un atacante engaña a un usuario autenticado para que realice
+             * acciones no deseadas en una aplicación web en la que está autenticado.
+             * Estos ataques pueden ser muy peligrosos porque permiten al
+             * atacante realizar acciones en nombre del usuario sin
+             * su conocimiento ni consentimiento.
+             */
+            //.csrf((csrf) -> csrf.disable()) // <- deshabilita CSRF. Está bien dejarlo así en tiempo de desarrollo,
+            // pero no en producción.
+            .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())) // <- así debe
+            // quedar en producción.
             .authorizeHttpRequests((authz) -> authz
                     .requestMatchers("/js/**", "/css/**").permitAll()
                     .requestMatchers("/films/**").hasAnyRole("USER", "ADMIN", "GOMA")
